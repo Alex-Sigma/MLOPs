@@ -1,1 +1,4 @@
-# MLOPs
+### Instalation
+```
+uv sync
+```
