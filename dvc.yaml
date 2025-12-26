@@ -1,0 +1,48 @@
+# dvc.yaml
+stages:
+  data_split:
+    cmd: >
+      rm -rf data/train_data data/test_data &&
+      uv run python -m l9_dvc_pipeline.data_split
+      --data_dir ${data_split.data_dir}
+      --test_region ${data_split.test_region}
+      --random_seed ${data_split.random_seed}
+    deps:
+      - src/l9_dvc_pipeline/data_split.py
+      - data/pool_data
+    outs:
+      - data/train_data
+      - data/test_data
+
+  train:
+    cmd: >
+      rm -rf models &&
+      uv run python -m l9_dvc_pipeline.train
+      --train_data_dir ${train.train_data_dir}
+      --random_seed ${train.random_seed}
+      --valid_pct ${train.valid_pct}
+      --arch ${train.arch}
+      --img_size ${train.img_size}
+      --batch_size ${train.batch_size}
+      --epochs ${train.epochs}
+      --base_lr ${train.base_lr}
+    deps:
+      - src/l9_dvc_pipeline/train.py
+      - data/train_data
+    outs:
+      - models
+
+  evaluate:
+    cmd: >
+      rm -rf ${evaluate.results_dir} &&
+      uv run python -m l9_dvc_pipeline.evaluate
+      --test_data_dir ${evaluate.test_data_dir}
+      --model_dir ${evaluate.model_dir}
+      --results_dir ${evaluate.results_dir}
+      --n_samples_to_save ${evaluate.n_samples_to_save}
+    deps:
+      - src/l9_dvc_pipeline/evaluate.py
+      - data/test_data
+      - models
+    outs:
+      - results/evaluate
