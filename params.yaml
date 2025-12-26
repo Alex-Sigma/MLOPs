@@ -1,0 +1,21 @@
+# params.yaml
+data_split:
+  data_dir: data
+  test_region: REGION_1
+  random_seed: 42
+
+train:
+  train_data_dir: data/train_data
+  random_seed: 42
+  valid_pct: 0.1
+  arch: shufflenet_v2_x2_0
+  img_size: 256
+  batch_size: 8
+  epochs: 8
+  base_lr: 0.01
+
+evaluate:
+  test_data_dir: data/test_data
+  model_dir: models
+  results_dir: results/evaluate
+  n_samples_to_save: 10
