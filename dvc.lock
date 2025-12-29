@@ -1,0 +1,71 @@
+schema: '2.0'
+stages:
+  data_split:
+    cmd: "rm -rf data/train_data data/test_data && uv run python -m l9_dvc_pipeline.data_split
+      --data_dir data --test_region REGION_1 --random_seed 42\n"
+    deps:
+    - path: data/pool_data
+      hash: md5
+      md5: 825d4d7b563525c1002253af05abd6ed.dir
+      size: 18999874
+      nfiles: 183
+    - path: src/l9_dvc_pipeline/data_split.py
+      hash: md5
+      md5: da49400ff83842b176f52f146b82dcdf
+      size: 1493
+    outs:
+    - path: data/test_data
+      hash: md5
+      md5: 1bb16eb1219b47a8bf711ade27c476e4.dir
+      size: 2087761
+      nfiles: 24
+    - path: data/train_data
+      hash: md5
+      md5: a28a7e4d342c27c1d7ad3c17ec1dfa7a.dir
+      size: 16905965
+      nfiles: 158
+  train:
+    cmd: "rm -rf models && uv run python -m l9_dvc_pipeline.train --train_data_dir
+      data/train_data --random_seed 42 --valid_pct 0.1 --arch shufflenet_v2_x2_0 --img_size
+      256 --batch_size 8 --epochs 8 --base_lr 0.01\n"
+    deps:
+    - path: data/train_data
+      hash: md5
+      md5: a28a7e4d342c27c1d7ad3c17ec1dfa7a.dir
+      size: 16905965
+      nfiles: 158
+    - path: src/l9_dvc_pipeline/train.py
+      hash: md5
+      md5: f1bac129a170f7b108e8e0cb587f4853
+      size: 2610
+    outs:
+    - path: models
+      hash: md5
+      md5: 43c383d358f63b82cd2a97e007015547.dir
+      size: 369688
+      nfiles: 2
+  evaluate:
+    cmd: "rm -rf results/evaluate && uv run python -m l9_dvc_pipeline.evaluate --test_data_dir
+      data/test_data --model_dir models --results_dir results/evaluate --n_samples_to_save
+      10\n"
+    deps:
+    - path: data/test_data
+      hash: md5
+      md5: 1bb16eb1219b47a8bf711ade27c476e4.dir
+      size: 2087761
+      nfiles: 24
+    - path: models
+      hash: md5
+      md5: 43c383d358f63b82cd2a97e007015547.dir
+      size: 369688
+      nfiles: 2
+    - path: src/l9_dvc_pipeline/evaluate.py
+      hash: md5
+      md5: 407a9f10bb5fd7743f43fa4f29b2b4d6
+      size: 3628
+    outs:
+    - path: results/evaluate
+      hash: md5
+      md5: 110b1ed0ad87ebe14e556561c7e19b2e.dir
+      size: 1294766
+      nfiles: 10
