@@ -17,3 +17,4 @@ data/train_data/
 data/test_data/
 results/evaluate/
 models/
+/models
