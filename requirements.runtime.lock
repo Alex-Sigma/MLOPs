@@ -15,7 +15,6 @@ anyio==4.11.0
     #   httpx
     #   starlette
     #   watchfiles
-apache-airflow==3.1.0
     # via
     #   apache-airflow-providers-common-compat
     #   apache-airflow-providers-common-io
@@ -23,23 +22,16 @@ apache-airflow==3.1.0
     #   apache-airflow-providers-smtp
     #   apache-airflow-providers-standard
     #   l9-airflow
-apache-airflow-core==3.1.0
     # via
     #   apache-airflow
     #   apache-airflow-task-sdk
-apache-airflow-providers-common-compat==1.7.4
     # via
     #   apache-airflow-core
     #   apache-airflow-providers-smtp
-apache-airflow-providers-common-io==1.6.3
     # via apache-airflow-core
-apache-airflow-providers-common-sql==1.28.1
     # via apache-airflow-core
-apache-airflow-providers-smtp==2.3.1
     # via apache-airflow-core
-apache-airflow-providers-standard==1.8.0
     # via apache-airflow-core
-apache-airflow-task-sdk==1.1.0
     # via
     #   apache-airflow
     #   apache-airflow-core
@@ -434,3 +426,4 @@ wrapt==1.17.3
     # via deprecated
 zipp==3.23.0
     # via importlib-metadata
+psycopg2-binary==2.9.9
