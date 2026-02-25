@@ -1,5 +1,10 @@
+# docker-compose.yml
 x-airflow-common: &airflow-common
   image: mlops-airflow:3.1.0-python3.12
+  build:
+    context: .
+    dockerfile: Dockerfile
+  pull_policy: never
   depends_on:
     postgres:
       condition: service_healthy
@@ -7,6 +12,12 @@ x-airflow-common: &airflow-common
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
     AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
     AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+    AIRFLOW__CORE__SECRET_KEY: "bdeefb532081785bd293f20adc87f955844128126f06dbda307a6a953e18887f" # new authentification 
+    AIRFLOW__API_AUTH__JWT_SECRET: "ZJ90ElEex9HenwxaTb7eMH7f5D2f1rAe3BiiYClqYtw="
+   # AIRFLOW__CORE__FERNET_KEY: "ZJ90ElEex9HenwxaTb7eMH7f5D2f1rAe3BiiYClqYtw="  # new authentification 
+    
+
+    AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-api-server:8080/execution/ # explicit url 
 
     AIRFLOW__CORE__AUTH_MANAGER: airflow.api_fastapi.auth.managers.simple.simple_auth_manager.SimpleAuthManager
     AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_USERS: "admin:Admin"
@@ -35,7 +46,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U airflow -d airflow"]
       interval: 5s
+      timeout: 5s
       retries: 20
+      start_period: 10s
 
   airflow-init:
     <<: *airflow-common
@@ -65,7 +78,7 @@ services:
       airflow-init:
         condition: service_completed_successfully
     command: dag-processor
-    
+
   airflow-triggerer:
     <<: *airflow-common
     depends_on:
